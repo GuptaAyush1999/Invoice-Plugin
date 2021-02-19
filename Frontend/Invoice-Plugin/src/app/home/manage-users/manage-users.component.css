@@ -1,0 +1,18 @@
+.users {
+  font-size: 30px;
+  margin-left: 45%;
+  padding-bottom: 20%;
+  font-weight: 500;
+  color: navy;
+}
+
+table {
+  width: 50%;
+  margin: auto;
+  margin-top: 10px;
+}
+
+mat-paginator {
+  width: 50%;
+  margin: auto;
+}

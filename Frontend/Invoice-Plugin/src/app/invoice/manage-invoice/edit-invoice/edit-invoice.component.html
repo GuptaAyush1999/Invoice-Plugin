@@ -1,0 +1,243 @@
+
+
+<div class="container mt-3" style="background-color: rgb(216, 216, 216);">
+
+
+<form  [formGroup]='editInvoiceForm' (ngSubmit)="onSubmit()">
+   <!-- 1st row -->
+    <div class="form-row mt-2">
+        <div class="form-inline col-md-6">
+        <div class="form-group col-md-12">
+            <label for="creator" class="mr-4">Created By</label>
+            <select id="creator" class="form-control" formControlName="creator">
+              
+                <option selected>SocialEngineAddOns</option>
+                <option>Prime Messenger / Channelize.io</option>
+                <option>AlmaHub</option>
+                <option>MageCube</option>
+            </select>
+        </div>
+      </div>
+
+    </div>
+
+<hr>
+<!-- 2nd row -->
+    <div class="form-row mt-2">
+        <div class="form-inline col-md-6">
+            <div class="form-group col-md-12">
+                <label for="customerName" class="mr-2">Name(Bill To):</label>
+                <input type="text" class="form-control" id="customerName" placeholder="Name"
+                       formControlName="customerName">
+            </div>
+        </div>
+       
+        <div class="form-inline col-md-6">
+             <div class="form-group col-md-12">
+                <label for="date" class="mr-5">Invoice Date</label>
+                    <input type="date" class="form-control" id="date" formControlName="invoiceDate">
+             </div>
+         </div>
+    </div>
+
+    <!-- 3rd row -->
+    <div class="form-inline mt-2">
+    <div class="form-group">
+      <label for="address" class="mr-5 ml-3">Address</label>
+      <input type="text" class="form-control" id="address" placeholder="1234 Main St"
+             formControlName="address">
+    </div>
+</div>
+
+    <!-- 4th row  -->
+    <div class="form-row">
+        <div class="form-inline col-md-6 mt-2">
+            <div class="form-group">
+              <label for="contact" class="mr-4 ml-3">Contact no.</label>
+              <input type="number" class="form-control" id="contact" formControlName="contactNo">
+            </div><br>
+            <span id="valid" *ngIf="editInvoiceForm.get('contactNo').status !== 'VALID' && editInvoiceForm.get('contactNo').touched" >
+              *Please enter a valid mobile no
+            </span>
+        </div>
+
+        <div class="form-inline col-md-3">
+            <div class="form-group col-md-12">
+                <!-- <label for="currency" class="mr-4">Select Currency</label> -->
+                <select id="currency" class="form-control" formControlName="currency">
+                    <option selected>INR</option>
+                    <option>USD</option>
+                  
+                </select>
+            </div>
+          </div>
+        <div class="form-inline col-md-3" 
+             *ngIf="editInvoiceForm.get('currency').value === 'INR'"
+              >
+         
+            <div class="form-group col-md-12">
+                <!-- <label for="region" class="mr-4">Select Region</label> -->
+                <select id="region" class="form-control" formControlName="region">
+      
+                    <option selected>HARYANA</option>
+                    <option>OUT OF HARYANA</option>
+                  
+                </select>
+            </div>
+         </div>
+    </div>
+   
+
+<!-- 5th row -->
+<div class="form-inline mt-2">
+    <div class="form-group">
+      <label for="email" class="mr-5 ml-3">Email</label>
+      <input type="email" class="form-control ml-3" id="email" formControlName="email">
+    </div>
+</div>
+
+
+<!-- add products -->
+<div class="card border-secondary mt-4">
+    <div class="card-body">
+      <div>
+        <h4 class="card-title d-flex justify-content-between">Order Details </h4>
+          
+          <button type="button"
+                class="btn btn-secondary" (click)="addProduct()">+ add</button>
+
+
+                <div class="form-row m-2" formArrayName="products">
+                  <div 
+                      class="row mb-2"
+                      *ngFor="let productCtrl of controls; let i = index"
+                      [formGroupName]="i"
+                       >
+                      <div class="col-md-3">
+                           <input
+        
+                               type="text"
+                               class="form-control"
+                               placeholder="Product Name"
+                               formControlName="name">
+                      </div>
+                      <div class="col-md-3">
+                           <input
+        
+                              type="number"
+                              class="form-control"
+                              placeholder="Product Price"
+                              formControlName="price">
+                      </div>
+                      <div class="col-md-3">
+                           <input
+      
+                              type="number"
+                              class="form-control"
+                              placeholder="Product qty"
+                              formControlName="qty">
+                      </div>
+                      <span>
+                        <button class="btn btn-danger" (click)="onDelete(i)">X</button>
+                      
+
+                      </span>
+                    </div>
+                
+                       
+        <div class="row" >
+          <table class="table" *ngIf="editInvoiceForm.get('products').status === 'VALID'">
+            <thead>
+                <tr>
+                    <th width="25%">Product</th>
+                    <th width="25%">Price</th>
+                    <th width="25%">Quantity</th>
+                    <th width="25%">Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+              <tr  *ngFor="let product of editInvoiceForm.get('products').value; let i=index">
+                
+                <td>{{product.name}}</td>
+                <td>{{product.price}}</td>
+                <td>{{product.qty}}</td>
+                <td>{{product.price * product.qty}}</td>
+               
+              </tr>
+            </tbody> 
+        </table>
+
+        </div>
+        </div>
+      </div>
+    </div>
+</div>
+
+<button type="button" class="btn btn-primary" (click)="onAddAmount()" [disabled]="editInvoiceForm.get('products').status === 'INVALID'">Calculate Amount</button>
+
+<hr>
+
+<!-- ammount calculation -->
+
+
+<table class="table table-sm amount ml-auto" *ngIf="pressButton">
+  <tbody>
+    
+    <tr *ngIf="editInvoiceForm.get('currency').value === 'INR'">
+      <th scope="row">Subtotal</th>
+      <td>{{subtotal}}</td>
+     
+    </tr>
+    <tr *ngIf="editInvoiceForm.get('currency').value === 'INR'">
+      <th scope="row">Discount</th>
+      <td>{{discount}}</td>
+    
+    </tr>
+    <tr *ngIf="editInvoiceForm.get('currency').value === 'INR' && editInvoiceForm.get('region').value === 'HARYANA'">
+      <th scope="row">CGST @9%</th>
+      <td>{{CGST}}</td>
+    </tr>
+    <tr *ngIf="editInvoiceForm.get('currency').value === 'INR' && editInvoiceForm.get('region').value === 'HARYANA'">
+      <th scope="row">SGST @9%</th>
+      <td>{{SGST}}</td>
+    
+    </tr>
+    <tr *ngIf="editInvoiceForm.get('currency').value === 'INR' && editInvoiceForm.get('region').value === 'OUT OF HARYANA'">
+      <th scope="row">IGST @18%</th>
+      <td>{{IGST}}</td>
+    
+    </tr>
+
+    <tr>
+      <th scope="row">Total</th>
+      <td>{{total}}</td>
+    
+    </tr>
+  </tbody>
+</table>
+
+    <hr>
+<div class="mb-2">
+    <span class="mr-2">PAN Number</span>
+    DDABC00986
+  </div>
+
+  <div class="mb-2">
+    <span class="mr-2">GST Number</span>
+    DDABC00986XXXX57878
+  </div>
+
+  <div class="mb-4">
+    <span class="mr-2">LUT Number</span>
+    <span>DDABC00986SFAHVSHADYJ687424968NKNAKXBXXXX6879</span>
+ </div>
+    <button type="submit" class="btn btn-primary mb-2" [disabled]="!editInvoiceForm.valid">Edit</button>
+  </form>
+
+ 
+
+
+ 
+
+</div>
+

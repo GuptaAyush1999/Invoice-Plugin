@@ -1,0 +1,55 @@
+<!-- Toolbar -->
+<!-- <mat-toolbar color="primary" class="app-header">
+   
+    <span class="nav-tool-items">
+     
+      <a mat-button mat-raised-button routerLink="/users" >Manage Users</a>
+    </span>
+    <span class="nav-tool-items">
+     
+      <a mat-button mat-raised-button routerLink="/home" routerLinkActive="active">Home</a>
+    </span>
+  </mat-toolbar> -->
+
+  <div class="login-wrapper" fxLayout="row" fxLayoutAlign="center center">
+    <mat-card class="box">
+      <mat-card-header>
+        <mat-card-title><h3 style="color: rgb(75, 0, 250);">Create User</h3></mat-card-title>
+      </mat-card-header>
+    
+  
+      <form class="example-form" [formGroup]="signupForm" (ngSubmit)=onSubmit()>
+  
+        <mat-card-content>
+          <mat-form-field class="example-full-width">
+            <input matInput placeholder="name" formControlName="name">
+          </mat-form-field>
+          <br>
+  
+          <mat-form-field class="example-full-width">
+            <input matInput placeholder="email" type="email" formControlName="email">
+          </mat-form-field>
+          <br>
+  
+          <mat-form-field class="example-full-width">
+            <input matInput type="password" placeholder="Password" formControlName="password">
+          </mat-form-field>
+          <br>
+  
+          <mat-form-field class="example-full-width">
+            <mat-label>Choose a role...</mat-label>
+            <mat-select formControlName="status" >
+              <mat-option [value]="roles"  *ngFor="let roles of Roles" >{{roles}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <br>
+         
+  
+        </mat-card-content>
+  
+        <button mat-raised-button color="primary" class="btn-block" type="submit" [disabled]="!signupForm.valid">Register</button>
+  
+      </form>
+    </mat-card>
+  </div>

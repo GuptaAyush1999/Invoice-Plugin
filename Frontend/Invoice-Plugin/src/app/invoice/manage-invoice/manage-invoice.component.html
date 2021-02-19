@@ -1,0 +1,174 @@
+
+
+<div class="container">
+  <mat-card class="example-card" *ngIf="dataSource?.data.length === 0">
+    <img mat-card-image src="https://blog.varstreetinc.com/wp-content/uploads/2019/03/1_What-is-an-Invoice.png">
+        <mat-card-content>
+      <p>
+        Invoice Simple is the easiest way to send professional invoices and estimates to your customers.
+         It's perfect for small business owners, contractors and freelancers needing a fast, easy to use mobile invoicing solution.
+          Create, send and track invoices and estimates on your phone and keep your finances organized.
+      </p>
+    </mat-card-content>
+  </mat-card>
+  <mat-header>
+    <mar-title class="invoices" 
+    *ngIf="dataSource?.data.length !== 0"
+    >
+        All Invoices
+    </mar-title>
+    <mar-title *ngIf="dataSource?.data.length === 0">
+      <br>
+      <br>
+        <h3>You Have Not Created Any Invoice!!!</h3> 
+       <hr>
+        Please Create a Invoice .
+        <button mat-raised-button color="primary" (click)="onCreateInvoice()">Create Invoice</button>
+    </mar-title>
+</mat-header>
+<br style="margin: auto;">
+
+  <div class="container ml-5">
+ <div class="row ml-5 mt-5 mb-5">
+  <div class="col-md-2">
+    <button class="round" mat-raised-button (click)="onFilterButton('All')">All</button>
+  </div>
+  <div class="col-md-2">
+    <button class="round" mat-raised-button (click)="onFilterButton('Paid')">Paid</button>
+  </div>
+  <div class="col-md-2">
+    <button class="round" mat-raised-button (click)="onFilterButton('UnPaid')">UnPaid</button>
+  </div>
+  <div class="col-md-2">
+    <button class="round" mat-raised-button (click)="onFilterButton('Drafted')">Drafted</button>
+  </div>
+  <div class="col-md-2">
+    <button class="round" mat-raised-button (click)="onFilterButton('Cancelled')">Cancelled</button>
+  </div>
+</div>
+</div>
+
+
+<mat-form-field *ngIf="dataSource?.data.length !== 0">
+  <mat-label>Search</mat-label>
+  <input matInput (keyup)="applyFilter($event)" placeholder="Ex. ium" #input>
+</mat-form-field>
+
+
+<div class="row">
+  <div class="col-sm-8">
+    <form [formGroup]="editStatus">
+            
+      <div class="form-group" style="width: 20%;">
+         
+          <select formControlName="status" class="form-control" (change)="statusChanged()">
+              <option disabled selected>Batch</option>
+              <option value="Paid">Mark As Paid</option>
+              <option value="UnPaid">Mark As UnPaid</option>
+              <option value="Drafted">Mark As Drafted</option>
+              <option value="Cancelled">Mark As Cancelled</option>
+          </select>
+         
+      </div>
+  </form>
+  </div>
+  <div class="col-sm-2">
+    <a mat-raised-button color="primary" (click)="downloadData()">Download All</a>
+  </div>
+  <div class="col-sm-2">
+    <a mat-raised-button color="warn" (click)="deleteData()" >Delete All</a>
+  </div>
+
+</div>
+
+
+
+
+<!-- Table Data -->
+
+<table mat-table class="lessons-table mat-elevation-z8" [dataSource]="dataSource" matSort *ngIf="dataSource?.data.length !== 0">
+
+
+    <!-- Checkbox Column -->
+  <ng-container matColumnDef="select">
+    <th mat-header-cell *matHeaderCellDef>
+      <mat-checkbox (change)="$event ? masterToggle() : null"
+                    [checked]="selection.hasValue() && isAllSelected()"
+                    [indeterminate]="selection.hasValue() && !isAllSelected()"
+                    >
+      </mat-checkbox>
+    </th>
+    <td mat-cell *matCellDef="let row">
+      <mat-checkbox (click)="$event.stopPropagation()"
+                    (change)="$event ? selection.toggle(row) : null"
+                    [checked]="selection.isSelected(row)"
+                    >
+      </mat-checkbox>
+    </td>
+  </ng-container>
+
+
+  <!-- Table Content -->
+    <ng-container matColumnDef="invoiceDate">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Date</th>
+        <td mat-cell class="description-cell"
+                  *matCellDef="let lesson">{{lesson.invoiceDate.slice(0,10)}}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="invoiceNo">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Invoice Number</th>
+        <td mat-cell class="description-cell"
+                  *matCellDef="let lesson">{{lesson.invoiceNo}}</td>
+    
+    </ng-container>
+
+    <ng-container matColumnDef="customerName">
+       <th mat-header-cell *matHeaderCellDef mat-sort-header>Recipient</th>
+       <td mat-cell *matCellDef="let lesson">{{lesson.customerName}}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="creator">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Creator</th>
+        <td mat-cell *matCellDef="let lesson">{{lesson.user.name}}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="status">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Status</th>
+      <td mat-cell *matCellDef="let lesson">{{lesson.status}}</td>
+  </ng-container>
+
+    <ng-container matColumnDef="totalPrice">
+       <th mat-header-cell *matHeaderCellDef mat-sort-header>Amount</th>
+       <td mat-cell class="description-cell"
+              *matCellDef="let lesson">$ {{lesson.totalPrice}}</td>
+
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef class="pl-5"> Actions </th>
+        <td mat-cell *matCellDef="let row" >
+            <a mat-button color="primary" (click)="onEdit(row._id)">Edit</a> | 
+            <a mat-button color="primary" (click)="onDownload(row._id)">Download</a>|
+            <a mat-raised-button color="warn" (click)="onDelete(row._id)">Delete</a>
+        </td>
+    </ng-container>
+
+<tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+
+<tr mat-row *matRowDef="let row; columns: displayedColumns"
+         (click)="selection.toggle(row)"
+></tr>
+
+<tr class="mat-row" *matNoDataRow>
+  <td class="mat-cell" colspan="4" style="color: red;">No data matching the filter </td>
+</tr>
+
+</table>
+
+
+<!-- Paginator -->
+
+<mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons *ngIf="dataSource?.data.length !== 0"></mat-paginator>
+
+</div>
+
